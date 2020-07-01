@@ -1,0 +1,37 @@
+﻿@inherits GameComponentBase
+
+<div>
+    <button class="btn btn-primary" @onclick="ToggleGameState">
+        @if (CurrentGame.IsStarted)
+        {
+            <span>Stop Game</span>
+        }
+        else
+        {
+            <span>Start Game</span>
+        }
+    </button>
+
+    <!-- <button class="btn btn-primary" onclick="@Test">Test</button> -->
+
+    <input type="checkbox" id="isEasy" @bind="@CurrentGame.IsEasy" /><label for="isEasy">Easy Mode</label>
+
+    <span class="score">Score: @CurrentGame.Score</span>
+    <span class="message">@Message</span>
+</div>
+
+<div id="wrapper">
+    @foreach (var shark in CurrentGame.Sharks)
+    {
+        <div class='shark swimming' style='top: @(shark.Height + "%"); animation-duration: @(shark.SecondsToSolve + "s");'>
+            <div class='@(shark.IsSolved ? "solved" : "")'>
+                <div class="icon">🦈</div>
+                <div class="word">
+                    <span class="letters-done">@shark.CharsDone</span>
+                    <span class="letters-togo">@shark.CharsToGo</span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

@@ -1,7 +1,19 @@
 ﻿@page "/"
+@inherits IndexBase
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+@if (string.IsNullOrEmpty(GameContext.PlayerName))
+{
+    <div class="container">
+        <div class="col-md-4 offset-md-4">
+            <div class="form-group">
+                <label for="name">What's your name?</label>
+                <input id="name" class="form-control" type="text" placeholder="Name" @bind="TempName" />
+            </div>
+            <button type="button" class="btn btn-primary" @onclick="SetName">Mkay</button>
+        </div>
+    </div>
+}
+else
+{
+    <GameComponent />
+}
