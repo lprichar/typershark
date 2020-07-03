@@ -3,6 +3,7 @@
     public interface IGameContext
     {
         string PlayerName { get; set; }
+        public Game CurrentGame { get; set; }
     }
 
     /// <summary>
@@ -11,5 +12,6 @@
     public class GameContext : IGameContext
     {
         public string PlayerName { get; set; }
+        public Game CurrentGame { get; set; }
     }
 }

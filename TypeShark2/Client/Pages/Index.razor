@@ -5,6 +5,11 @@
     <PlayerNameComponent OnSetName="@OnSetName" />
 }
 else
+if (Context.CurrentGame == null)
+{
+    <GamesListComponent />
+}
+else
 {
     <GameComponent />
 }

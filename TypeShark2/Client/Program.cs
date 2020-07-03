@@ -4,6 +4,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TypeShark2.Client.Data;
+using TypeShark2.Client.Services;
 
 namespace TypeShark2.Client
 {
@@ -16,6 +17,7 @@ namespace TypeShark2.Client
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddSingleton<IGameContext, GameContext>();
+            builder.Services.AddTransient<IGamesService, GamesService>();
 
             await builder.Build().RunAsync();
         }
