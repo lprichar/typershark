@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using TypeShark2.Client.Data;
 using TypeShark2.Client.JsInterop;
 
 namespace TypeShark2.Client.Pages
 {
-    public class GameComponentBase : ComponentBase
+    public partial class GameComponent
     {
         public static Game CurrentGame;
         protected static string Message { get; set; }

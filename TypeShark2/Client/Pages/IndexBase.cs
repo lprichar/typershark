@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using TypeShark2.Client.Data;
+﻿using TypeShark2.Client.Data;
 
 namespace TypeShark2.Client.Pages
 {
-    public class IndexBase : ComponentBase
+    public partial class Index
     {
         public static GameContext GameContext { get; set; } = new GameContext();
 
