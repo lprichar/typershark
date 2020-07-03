@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TypeShark2.Shared;
 
@@ -11,23 +13,18 @@ namespace TypeShark2.Client.Services
 
     public class GamesService : IGamesService
     {
+        private readonly HttpClient _httpClient;
+
+        public GamesService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
         public async Task<IEnumerable<GameDto>> GetGames()
         {
-            await Task.Yield();
-
-            return new List<GameDto>
-            {
-                new GameDto
-                {
-                    Id = 5,
-                    Name = "5"
-                },
-                new GameDto
-                {
-                    Id = 6,
-                    Name = "6"
-                }
-            };
+            var gamesStream = await _httpClient.GetStreamAsync("games");
+            var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            return await JsonSerializer.DeserializeAsync<IEnumerable<GameDto>>(gamesStream, jsonOptions);
         }
     }
 }
