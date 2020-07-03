@@ -1,6 +1,14 @@
 ﻿namespace TypeShark2.Client.Data
 {
-    public class GameContext
+    public interface IGameContext
+    {
+        string PlayerName { get; set; }
+    }
+
+    /// <summary>
+    /// A singleton that owns the context data for a single player's gaming session
+    /// </summary>
+    public class GameContext : IGameContext
     {
         public string PlayerName { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Threading.Tasks;
 using TypeShark2.Client.Data;
 using TypeShark2.Client.JsInterop;
@@ -7,6 +8,9 @@ namespace TypeShark2.Client.Pages
 {
     public partial class GameComponent
     {
+        [Inject]
+        public IGameContext Context { get; private set; }
+
         public static Game CurrentGame;
         protected static string Message { get; set; }
 

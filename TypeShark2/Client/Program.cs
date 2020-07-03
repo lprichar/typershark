@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TypeShark2.Client.Data;
 
 namespace TypeShark2.Client
 {
@@ -14,6 +15,7 @@ namespace TypeShark2.Client
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddSingleton<IGameContext, GameContext>();
 
             await builder.Build().RunAsync();
         }

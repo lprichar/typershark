@@ -1,16 +1,18 @@
-﻿using TypeShark2.Client.Data;
+﻿using Microsoft.AspNetCore.Components;
+using TypeShark2.Client.Data;
 
 namespace TypeShark2.Client.Pages
 {
     public partial class Index
     {
-        public static GameContext GameContext { get; set; } = new GameContext();
+        [Inject]
+        public IGameContext Context { get; set; }
 
         public string TempName { get; set; }
 
         public void SetName()
         {
-            GameContext.PlayerName = TempName;
+            Context.PlayerName = TempName;
         }
     }
 }
