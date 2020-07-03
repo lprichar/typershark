@@ -1,13 +1,12 @@
-﻿<div class="container">
+﻿@using TypeShark2.Client.Data
+<div class="container">
     <div class="col-md-4 offset-md-4">
-        <div class="form-group">
-            <label for="name">What's your name?</label>
-            <input id="name" class="form-control" type="text" placeholder="Name" @bind="TempName" />
-        </div>
-        <button type="button" class="btn btn-primary" @onclick="SetName">Mkay</button>
+        <EditForm Model="TempPlayer" OnValidSubmit="OnSetName">
+            <div class="form-group">
+                <label for="name">What's your name?</label>
+                <InputText id="name" class="form-control" type="text" placeholder="Name" @bind-Value="TempPlayer.PlayerName" />
+            </div>
+            <button type="submit" class="btn btn-primary" @onclick="SetName">Mkay</button>
+        </EditForm>
     </div>
 </div>
-
-@code {
-
-}

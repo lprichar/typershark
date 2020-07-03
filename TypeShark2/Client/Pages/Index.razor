@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-@if (string.IsNullOrEmpty(Context.PlayerName))
+@if (Context.Player?.PlayerName == null)
 {
     <PlayerNameComponent OnSetName="@OnSetName" />
 }

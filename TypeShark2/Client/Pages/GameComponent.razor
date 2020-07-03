@@ -1,4 +1,7 @@
-﻿<div>
+﻿@page "/game"
+@page "/game/{GameId}"
+
+<div>
     <button class="btn btn-primary" @onclick="ToggleGameState">
         @if (CurrentGame.IsStarted)
         {
@@ -14,7 +17,7 @@
 
     <input type="checkbox" id="isEasy" @bind="@CurrentGame.IsEasy" /><label for="isEasy">Easy Mode</label>
 
-    <span class="score">@Context.PlayerName Score: @CurrentGame.Score</span>
+    <span class="score">@Context.Player.PlayerName Score: @CurrentGame.Score</span>
     <span class="message">@Message</span>
 </div>
 

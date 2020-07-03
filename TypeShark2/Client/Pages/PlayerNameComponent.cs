@@ -7,16 +7,16 @@ namespace TypeShark2.Client.Pages
     public partial class PlayerNameComponent
     {
         [Inject]
-        public IGameContext Context { get; set; }
+        private IGameContext Context { get; set; }
 
-        public string TempName { get; set; }
+        private Player TempPlayer { get; set; } = new Player();
 
         [Parameter]
         public EventCallback OnSetName { get; set; }
 
-        public async Task SetName()
+        private async Task SetName()
         {
-            Context.PlayerName = TempName;
+            Context.Player = TempPlayer;
             await OnSetName.InvokeAsync(null);
         }
     }
