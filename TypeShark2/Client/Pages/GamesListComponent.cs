@@ -8,14 +8,23 @@ namespace TypeShark2.Client.Pages
 {
     public partial class GamesListComponent
     {
-        private IEnumerable<GameDto> Games { get; set; }
+        private IEnumerable<GameDto> PublicGames { get; set; }
 
         [Inject]
         protected IGamesService GamesService { get; set; }
 
+        [Inject]
+        protected NavigationManager NavigationManager { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
-            Games = await GamesService.GetGames();
+            PublicGames = await GamesService.GetGames();
+        }
+
+        protected void NewGame()
+        {
+            // todo: create new game, upload
+            NavigationManager.NavigateTo("/game");
         }
     }
 }

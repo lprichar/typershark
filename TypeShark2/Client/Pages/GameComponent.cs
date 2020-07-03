@@ -11,6 +11,9 @@ namespace TypeShark2.Client.Pages
         [Inject]
         public IGameContext Context { get; private set; }
 
+        [Parameter]
+        public string GameId { get; set; }
+
         public static Game CurrentGame;
         protected static string Message { get; set; }
 

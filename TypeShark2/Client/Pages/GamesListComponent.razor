@@ -1,20 +1,25 @@
 ﻿<div class="container">
     <div class="col-md-4 offset-md-4">
-        <h3>Existing Games</h3>
-        @if (Games == null)
+        <h3>Private Games</h3>
+        <a href="/game" class="btn btn-primary">Play Now</a>
+        
+        <h3>Public Games</h3>
+        @if (PublicGames == null)
         {
             <span>Loading...</span>
         }
         else
         {
             <ul>
-                @foreach (var game in Games)
+                @foreach (var game in PublicGames)
                 {
-                    <li>@game.Name (@game.Id)</li>
+                    <li><a href="/game/@game.Id">@game.Name (@game.Id)</a></li>
                 }
             </ul>
         }
+        
+        <h3>New Public Game</h3>
 
-        <button class="btn btn-primary" type="button">New Game</button>
+        <button class="btn btn-primary" type="button" @onclick="NewGame">New Public Game</button>
     </div>
 </div>
