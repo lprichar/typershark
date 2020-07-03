@@ -2,15 +2,7 @@
 
 @if (string.IsNullOrEmpty(Context.PlayerName))
 {
-    <div class="container">
-        <div class="col-md-4 offset-md-4">
-            <div class="form-group">
-                <label for="name">What's your name?</label>
-                <input id="name" class="form-control" type="text" placeholder="Name" @bind="TempName" />
-            </div>
-            <button type="button" class="btn btn-primary" @onclick="SetName">Mkay</button>
-        </div>
-    </div>
+    <PlayerNameComponent OnSetName="@OnSetName" />
 }
 else
 {
