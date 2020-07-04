@@ -8,7 +8,7 @@ namespace TypeShark2.Client.Services
 {
     public interface IGamesService
     {
-        Task<IEnumerable<GameDto>> GetGames();
+        Task<IList<GameDto>> GetGames();
     }
 
     public class GamesService : IGamesService
@@ -20,11 +20,11 @@ namespace TypeShark2.Client.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<GameDto>> GetGames()
+        public async Task<IList<GameDto>> GetGames()
         {
             var gamesStream = await _httpClient.GetStreamAsync("games");
             var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            return await JsonSerializer.DeserializeAsync<IEnumerable<GameDto>>(gamesStream, jsonOptions);
+            return await JsonSerializer.DeserializeAsync<List<GameDto>>(gamesStream, jsonOptions);
         }
     }
 }

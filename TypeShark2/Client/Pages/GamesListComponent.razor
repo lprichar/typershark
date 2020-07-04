@@ -1,9 +1,10 @@
-﻿<div class="container">
+﻿@using System.Xml.Schema
+<div class="container">
     <div class="col-md-4 offset-md-4">
-        <h3>Private Games</h3>
+        <h3>Single Player</h3>
         <a href="/game" class="btn btn-primary">Play Now</a>
         
-        <h3>Public Games</h3>
+        <h3>Existing Multi Player Games</h3>
         @if (PublicGames == null)
         {
             <span>Loading...</span>
@@ -17,9 +18,13 @@
                 }
             </ul>
         }
-        
-        <h3>New Public Game</h3>
 
-        <button class="btn btn-primary" type="button" @onclick="NewGame">New Public Game</button>
+        <h3>New Multi-Player Game</h3>
+        <p>Create game.  Wait for others to join.  Once everyone's joined start the game.</p>
+
+        <EditForm Model="NewGame" OnValidSubmit="CreateGame" class="form-inline">
+            <InputText id="name" class="form-control col-md-9" type="text" placeholder="Game Name" @bind-Value="NewGame.Name"/>
+            <button class="btn btn-primary col-md-3" type="submit">Create</button>
+        </EditForm>
     </div>
 </div>

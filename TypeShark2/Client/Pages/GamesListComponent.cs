@@ -8,7 +8,9 @@ namespace TypeShark2.Client.Pages
 {
     public partial class GamesListComponent
     {
-        private IEnumerable<GameDto> PublicGames { get; set; }
+        private IList<GameDto> PublicGames { get; set; }
+
+        private GameDto NewGame { get; set; } = new GameDto();
 
         [Inject]
         protected IGamesService GamesService { get; set; }
@@ -21,8 +23,9 @@ namespace TypeShark2.Client.Pages
             PublicGames = await GamesService.GetGames();
         }
 
-        protected void NewGame()
+        protected void CreateGame()
         {
+            PublicGames.Add(NewGame);
             // todo: create new game, upload
             NavigationManager.NavigateTo("/game");
         }
