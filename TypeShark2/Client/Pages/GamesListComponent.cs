@@ -25,8 +25,7 @@ namespace TypeShark2.Client.Pages
 
         protected void CreateGame()
         {
-            PublicGames.Add(NewGame);
-            // todo: create new game, upload
+            GamesService.CreateGame(NewGame);
             NavigationManager.NavigateTo("/game");
         }
     }

@@ -7,7 +7,22 @@
 else
 if (Context.CurrentGame == null)
 {
-    <GamesListComponent />
+    @if (MultiPlayer == null)
+    {
+        <div class="container">
+            <div class="col-md-4 offset-md-4">
+                <h3>Single Player</h3>
+                <a href="/game" class="btn btn-primary">Play Now</a>
+
+                <h3>Multi Player</h3>
+                <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Find Your People</button>
+            </div>
+        </div>
+    }
+    else if (MultiPlayer == true)
+    {
+        <GamesListComponent />
+    }
 }
 else
 {
