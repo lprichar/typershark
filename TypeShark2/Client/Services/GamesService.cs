@@ -11,6 +11,7 @@ namespace TypeShark2.Client.Services
     {
         Task<IList<GameDto>> GetGames();
         Task<GameDto> CreateGame(GameDto game);
+        Task<GameDto> JoinGame(GameDto gameDto);
     }
 
     public class GamesService : IGamesService
@@ -26,6 +27,13 @@ namespace TypeShark2.Client.Services
         public async Task<GameDto> CreateGame(GameDto game)
         {
             var response = await _httpClient.PostAsJsonAsync("api/games", game);
+            var responseStream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<GameDto>(responseStream, _jsonOptions);
+        }
+
+        public async Task<GameDto> JoinGame(GameDto gameDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync("api/games/" + gameDto.Id, gameDto);
             var responseStream = await response.Content.ReadAsStreamAsync();
             return await JsonSerializer.DeserializeAsync<GameDto>(responseStream, _jsonOptions);
         }

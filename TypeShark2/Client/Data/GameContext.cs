@@ -1,9 +1,11 @@
-﻿namespace TypeShark2.Client.Data
+﻿using TypeShark2.Shared;
+
+namespace TypeShark2.Client.Data
 {
     public interface IGameContext
     {
         public Player Player { get; set; }
-        public Game CurrentGame { get; set; }
+        public GameDto CurrentGame { get; set; }
     }
 
     /// <summary>
@@ -12,6 +14,6 @@
     public class GameContext : IGameContext
     {
         public Player Player { get; set; }
-        public Game CurrentGame { get; set; }
+        public GameDto CurrentGame { get; set; }
     }
 }

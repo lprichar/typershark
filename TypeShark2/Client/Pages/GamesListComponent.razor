@@ -11,7 +11,7 @@
             <ul>
                 @foreach (var game in PublicGames)
                 {
-                    <li><a href="/game/@game.Id">@game.Name (@game.Id)</a></li>
+                    <li><button type="button" @onclick="@(e => JoinGame(game.Id))">@game.Name (@game.Id)</button></li>
                 }
             </ul>
             @if (PublicGames.Count == 0)

@@ -4,27 +4,19 @@
 {
     <PlayerNameComponent OnSetName="@OnSetName" />
 }
-else
-if (Context.CurrentGame == null)
+else if (MultiPlayer == null)
 {
-    @if (MultiPlayer == null)
-    {
-        <div class="container">
-            <div class="col-md-4 offset-md-4">
-                <h3>Single Player</h3>
-                <a href="/game" class="btn btn-primary">Play Now</a>
+    <div class="container">
+        <div class="col-md-4 offset-md-4">
+            <h3>Single Player</h3>
+            <a href="/game" class="btn btn-primary">Play Now</a>
 
-                <h3>Multi Player</h3>
-                <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Find Your People</button>
-            </div>
+            <h3>Multi Player</h3>
+            <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Find Your People</button>
         </div>
-    }
-    else if (MultiPlayer == true)
-    {
-        <GamesListComponent />
-    }
+    </div>
 }
-else
+else if (MultiPlayer == true)
 {
-    <GameComponent />
+    <GamesListComponent />
 }

@@ -1,6 +1,15 @@
 ﻿@page "/game"
 @page "/game/{GameId}"
 
+<div style="float: right;">
+    <ul>
+        @foreach (var player in Context.CurrentGame.Players)
+        {
+            <li>@player.Name</li>
+        }
+    </ul>
+</div>
+
 <div>
     <button class="btn btn-primary" @onclick="ToggleGameState">
         @if (CurrentGame.IsStarted)
