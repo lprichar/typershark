@@ -3,8 +3,10 @@
     <div class="col-md-4 offset-md-4">
         <label for="name">What's your name?</label>
         <EditForm Model="TempPlayer" OnValidSubmit="SetName" class="form-inline">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
             <div class="form-group">
-                <InputText id="name" class="form-control" type="text" placeholder="Name" @bind-Value="TempPlayer.PlayerName" />
+                <InputText id="name" class="form-control" type="text" placeholder="Name" @bind-Value="TempPlayer.PlayerName"/>
             </div>
             <button type="submit" class="btn btn-primary">Mkay</button>
         </EditForm>
