@@ -23,10 +23,10 @@ namespace TypeShark2.Client.Pages
             PublicGames = await GamesService.GetGames();
         }
 
-        protected void CreateGame()
+        protected async Task CreateGame()
         {
-            GamesService.CreateGame(NewGame);
-            NavigationManager.NavigateTo("/game");
+            var newGame = await GamesService.CreateGame(NewGame);
+            NavigationManager.NavigateTo($"/game/{newGame.Id}");
         }
     }
 }

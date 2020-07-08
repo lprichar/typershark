@@ -10,11 +10,12 @@ namespace TypeShark2.Client.Services
     public interface IGamesService
     {
         Task<IList<GameDto>> GetGames();
-        Task CreateGame(GameDto game);
+        Task<GameDto> CreateGame(GameDto game);
     }
 
     public class GamesService : IGamesService
     {
+        private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         private readonly HttpClient _httpClient;
 
         public GamesService(HttpClient httpClient)
@@ -22,16 +23,17 @@ namespace TypeShark2.Client.Services
             _httpClient = httpClient;
         }
 
-        public async Task CreateGame(GameDto game)
+        public async Task<GameDto> CreateGame(GameDto game)
         {
-            await _httpClient.PostAsJsonAsync("api/games", game);
+            var response = await _httpClient.PostAsJsonAsync("api/games", game);
+            var responseStream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<GameDto>(responseStream, _jsonOptions);
         }
 
         public async Task<IList<GameDto>> GetGames()
         {
             var gamesStream = await _httpClient.GetStreamAsync("api/games");
-            var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            return await JsonSerializer.DeserializeAsync<List<GameDto>>(gamesStream, jsonOptions);
+            return await JsonSerializer.DeserializeAsync<List<GameDto>>(gamesStream, _jsonOptions);
         }
     }
 }

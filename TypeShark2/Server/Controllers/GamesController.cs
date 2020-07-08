@@ -11,10 +11,11 @@ namespace TypeShark2.Server.Controllers
         private static List<GameDto> _games = new List<GameDto>();
 
         [HttpPost]
-        public void Create([FromBody] GameDto game)
+        public GameDto Create([FromBody] GameDto game)
         {
             game.Id = _games.Count + 1;
             _games.Add(game);
+            return game;
         }
 
         [HttpGet]
