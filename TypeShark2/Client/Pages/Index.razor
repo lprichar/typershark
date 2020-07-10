@@ -1,22 +1,22 @@
 ﻿@page "/"
-
-@if (Context.Player?.PlayerName == null)
-{
-    <PlayerNameComponent OnSetName="@OnSetName" />
-}
-else if (MultiPlayer == null)
+@if (MultiPlayer == null)
 {
     <div class="container">
         <div class="col-md-4 offset-md-4">
             <h3>Single Player</h3>
-            <a href="/game" class="btn btn-primary">Play Now</a>
+            <a href="/game" class="btn btn-primary">Let Me At 'Em</a>
 
             <h3>Multi Player</h3>
-            <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Find Your People</button>
+            <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Let's Hunt Sharks, Together</button>
         </div>
     </div>
 }
 else if (MultiPlayer == true)
 {
-    <GamesListComponent />
+    if (Context.Player?.PlayerName == null)
+    {
+        <PlayerNameComponent OnSetName="@OnSetName" />
+    } else {
+        <GamesListComponent />
+    }
 }

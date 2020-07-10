@@ -12,17 +12,16 @@ namespace TypeShark2.Client.Pages
     public partial class GameComponent : IDisposable
     {
         [Inject]
-        public IGameContext Context { get; private set; }
+        private IGameContext Context { get; set; }
 
         [Parameter]
         public string GameId { get; set; }
 
-        private int? GetGameId() => string.IsNullOrEmpty(GameId) ? (int?)null : int.Parse(GameId);
-
-        public static Game CurrentGame;
+        protected static Game CurrentGame;
         protected static string Message { get; set; }
 
         private HubConnection _hubConnection;
+        private int? GetGameId() => string.IsNullOrEmpty(GameId) ? (int?)null : int.Parse(GameId);
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -52,12 +51,15 @@ namespace TypeShark2.Client.Pages
 
             if (multiPlayer)
             {
-                SignalRInit();
-
-                await _hubConnection.StartAsync();
-                var playerDto = new PlayerDto { Name = Context.Player.PlayerName };
-                await _hubConnection.SendAsync("JoinGame", gameId, playerDto);
+                await SignalRInit();
+                await JoinGame(gameId);
             }
+        }
+
+        private async Task JoinGame(int? gameId)
+        {
+            var playerDto = new PlayerDto { Name = Context.Player.PlayerName };
+            await _hubConnection.SendAsync("JoinGame", gameId, playerDto);
         }
 
         private void OnPlayerAdded(List<PlayerDto> playersInGame)
@@ -66,13 +68,14 @@ namespace TypeShark2.Client.Pages
             StateHasChanged();
         }
 
-        private void SignalRInit()
+        private async Task SignalRInit()
         {
             var absoluteUri = NavigationManager.ToAbsoluteUri("/gamehub");
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(absoluteUri)
                 .Build();
             _hubConnection.On<List<PlayerDto>>("PlayerAdded", OnPlayerAdded);
+            await _hubConnection.StartAsync();
         }
 
         private void GameInit()
@@ -84,7 +87,7 @@ namespace TypeShark2.Client.Pages
 
         private void SharkAdded(object sender, EventArgs e)
         {
-            InvokeAsync(this.StateHasChanged);
+            InvokeAsync(StateHasChanged);
         }
 
         private void GameOver(object sender, EventArgs e)
@@ -113,6 +116,7 @@ namespace TypeShark2.Client.Pages
         public void Dispose()
         {
             _ = _hubConnection?.DisposeAsync();
+            InteropKeyPress.KeyPress -= OnKeyPress;
             CurrentGame.SharkAdded -= SharkAdded;
             CurrentGame.GameOver -= GameOver;
         }
