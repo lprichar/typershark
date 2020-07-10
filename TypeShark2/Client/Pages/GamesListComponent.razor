@@ -1,5 +1,4 @@
-﻿@using System.Xml.Schema
-<div class="container">
+﻿<div class="container">
     <div class="col-md-4 offset-md-4">
         <h3>Existing Games</h3>
         @if (PublicGames == null)
@@ -11,7 +10,7 @@
             <ul>
                 @foreach (var game in PublicGames)
                 {
-                    <li><button type="button" @onclick="@(e => JoinGame(game.Id))">@game.Name (@game.Id)</button></li>
+                    <li><a href="game/@game.Id">@game.Name (@game.Id)</a></li>
                 }
             </ul>
             @if (PublicGames.Count == 0)

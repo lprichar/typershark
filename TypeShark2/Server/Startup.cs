@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using TypeShark2.Server.Hubs;
+using TypeShark2.Server.Services;
 
 namespace TypeShark2.Server
 {
@@ -25,6 +26,7 @@ namespace TypeShark2.Server
             services.AddSignalR();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddSingleton<IGamesService, GamesService>();
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(

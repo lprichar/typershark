@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TypeShark2.Client.Data;
 using TypeShark2.Client.JsInterop;
@@ -15,6 +16,8 @@ namespace TypeShark2.Client.Pages
 
         [Parameter]
         public string GameId { get; set; }
+
+        private int? GetGameId() => string.IsNullOrEmpty(GameId) ? (int?)null : Int32.Parse(GameId);
 
         public static Game CurrentGame;
         protected static string Message { get; set; }
@@ -38,34 +41,43 @@ namespace TypeShark2.Client.Pages
             InteropKeyPress.KeyPress += OnKeyPress;
             GameInit();
 
+            var gameId = GetGameId();
+            bool multiPlayer = gameId != null;
+
+            Context.CurrentGame = new GameDto
+            {
+                Id = gameId,
+                Players = new List<PlayerDto>()
+            };
+
+            if (multiPlayer)
+            {
+                SignalrInit();
+
+                await _hubConnection.StartAsync();
+                var playerDto = new PlayerDto { Name = Context.Player.PlayerName };
+                await _hubConnection.SendAsync("JoinGame", gameId, playerDto);
+            }
+        }
+
+        private void OnPlayerAdded(List<PlayerDto> playersInGame)
+        {
+            Context.CurrentGame.Players = playersInGame;
+            StateHasChanged();
+        }
+
+        private void SignalrInit()
+        {
             var absoluteUri = NavigationManager.ToAbsoluteUri("/gamehub");
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(absoluteUri)
                 .Build();
-
-            _hubConnection.On<string>("PlayerAdded", playerName =>
-            {
-                Context.CurrentGame.Players.Add(new PlayerDto
-                {
-                    Name = playerName
-                });
-                StateHasChanged();
-            });
-
-            await _hubConnection.StartAsync();
+            _hubConnection.On<List<PlayerDto>>("PlayerAdded", OnPlayerAdded);
         }
 
         private void GameInit()
         {
-            if (CurrentGame == null)
-            {
-                CurrentGame = new Game();
-                Console.WriteLine("Starting a new game");
-            }
-            else
-            {
-                Console.WriteLine("Game already in progress");
-            }
+            CurrentGame = new Game();
             CurrentGame.SharkAdded += SharkAdded;
             CurrentGame.GameOver += GameOver;
         }

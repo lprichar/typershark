@@ -37,20 +37,5 @@ namespace TypeShark2.Client.Pages
             Context.CurrentGame = newGame;
             NavigationManager.NavigateTo($"/game/{newGame.Id}");
         }
-
-        private async Task JoinGame(int gameId)
-        {
-            var gameDto = new GameDto
-            {
-                Id = gameId,
-                Players = new List<PlayerDto> {
-                    new PlayerDto { Name = Context.Player.PlayerName }
-                }
-            };
-
-            var existingGame = await GamesService.JoinGame(gameDto);
-            Context.CurrentGame = existingGame;
-            NavigationManager.NavigateTo($"/game/{existingGame.Id}");
-        }
     }
 }

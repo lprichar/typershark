@@ -1,19 +1,29 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Threading.Tasks;
+using TypeShark2.Server.Services;
 using TypeShark2.Shared;
 
 namespace TypeShark2.Server.Hubs
 {
     public class GameHub : Hub
     {
-        public async Task AddPlayer(PlayerDto playerDto)
+        private readonly IGamesService _gamesService;
+
+        public GameHub(IGamesService gamesService)
         {
-            await AddPlayer(Clients.All, playerDto);
+            _gamesService = gamesService;
         }
 
-        public static async Task AddPlayer(IClientProxy clients, PlayerDto playerDto)
+        public async Task JoinGame(int gameId, PlayerDto playerDto)
         {
-            await clients.SendAsync("PlayerAdded", playerDto.Name);
+            var gameDto = _gamesService.GetGame(gameId);
+            if (gameDto == null) throw new ArgumentException("Invalid game id " + gameId);
+            _gamesService.JoinGame(gameDto, playerDto);
+
+            var groupName = gameId.ToString();
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            await Clients.Group(groupName).SendAsync("PlayerAdded", gameDto.Players);
         }
     }
 }
