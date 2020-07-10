@@ -1,27 +1,26 @@
 ﻿@page "/"
 
 <div class="d-flex align-items-center vh-100">
-    <div class="container">
-        <div class="col-md-4 offset-md-4">
-            @if (MultiPlayer == null)
-            {
-                <h3>Single Player</h3>
-                <a href="/game" class="btn btn-primary">Let Me At 'Em</a>
+    <div class="col-md-4 offset-md-4">
+        @if (MultiPlayer == null)
+        {
+            <h3>Single Player</h3>
+            <a href="/game" class="btn btn-primary">Let Me At 'Em</a>
 
-                <h3 class="pt-4">Multi Player</h3>
-                <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Let's Hunt Sharks, Together</button>
-            }
-            else if (MultiPlayer == true)
+            <h3 class="pt-4">Multi Player</h3>
+            <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Let's Hunt Sharks, Together</button>
+        }
+        else if (MultiPlayer == true)
+        {
+            if (Context.Player?.PlayerName == null)
             {
-                if (Context.Player?.PlayerName == null)
-                {
-                    <PlayerNameComponent OnSetName="@OnSetName" />
-                }
-                else
-                {
-                    <GamesListComponent />
-                }
+                <PlayerNameComponent OnSetName="@OnSetName" />
             }
-        </div>
+            else
+            {
+                <GamesListComponent />
+            }
+        }
     </div>
 </div>
+

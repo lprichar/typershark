@@ -1,38 +1,42 @@
 ﻿@page "/game"
 @page "/game/{GameId}"
 
-<div style="float: right;">
-    <ul>
-        @foreach (var player in Context.CurrentGame.Players)
-        {
-            <li>@player.Name</li>
-        }
-    </ul>
-</div>
-
-<div>
-    <button class="btn btn-primary" @onclick="ToggleGameState">
-        @(CurrentGame.IsStarted ? "Stop" : "Start") Game
-    </button>
-
-    <input type="checkbox" id="isEasy" @bind="@CurrentGame.IsEasy" /><label for="isEasy">Easy Mode</label>
-
-    <span class="score">@Context.Player?.PlayerName Score: @CurrentGame.Score</span>
-    <span class="message">@Message</span>
-</div>
-
-<div id="wrapper">
-    @foreach (var shark in CurrentGame.Sharks)
-    {
-        <div class='shark swimming' style='top: @(shark.Height + "%"); animation-duration: @(shark.SecondsToSolve + "s");'>
-            <div class='@(shark.IsSolved ? "solved" : "")'>
-                <div class="icon">🦈</div>
-                <div class="word">
-                    <span class="letters-done">@shark.CharsDone</span>
-                    <span class="letters-togo">@shark.CharsToGo</span>
-                </div>
+<div class="d-flex vh-100 flex-column">
+    <div class="flex-fill p-3 sky">
+        <div class="d-flex flex-row">
+            <div class="flex-fill">
+                <button class="btn btn-primary pr-2" @onclick="ToggleGameState">
+                    @(CurrentGame.IsStarted ? "Stop" : "Start") Game
+                </button>
+                <input type="checkbox" id="isEasy" @bind="@CurrentGame.IsEasy"/><label for="isEasy">Easy Mode</label>
+            </div>
+            <div><span class="message">@Message</span></div>
+            <div class="flex-fill text-right">
+                <span class="score">@Context.Player?.PlayerName Score: @CurrentGame.Score</span>
             </div>
         </div>
-    }
+    </div>
+    <div class="flex-fill water" id="wrapper">        
+        <div class="d-flex flex-column players flex-grow-1">
+            @foreach (var player in Context.CurrentGame.Players)
+            {
+                <div class="player d-flex flex-column justify-content-center h-100" >@player.Name</div>
+            }
+        </div>
+
+        @foreach (var shark in CurrentGame.Sharks)
+        {
+            <div class='shark swimming' style='top: @(shark.Height + "%"); animation-duration: @(shark.SecondsToSolve + "s");'>
+                <div class='@(shark.IsSolved ? "solved" : "")'>
+                    <div class="icon">🦈</div>
+                    <div class="word">
+                        <span class="letters-done">@shark.CharsDone</span>
+                        <span class="letters-togo">@shark.CharsToGo</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
 
