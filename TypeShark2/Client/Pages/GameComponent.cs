@@ -96,11 +96,6 @@ namespace TypeShark2.Client.Pages
             });
         }
 
-        private void Test()
-        {
-            CurrentGame.Test();
-        }
-
         public async Task ToggleGameState()
         {
             if (CurrentGame.IsStarted)

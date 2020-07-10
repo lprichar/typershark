@@ -103,15 +103,6 @@ namespace TypeShark2.Client.Data
             GameOver?.Invoke(this, EventArgs.Empty);
         }
 
-        public void Test()
-        {
-            var shark = Sharks.FirstOrDefault();
-            if (shark != null)
-            {
-                RemoveShark(shark);
-            }
-        }
-
         public void Stop()
         {
             foreach (var shark in Sharks.ToList())

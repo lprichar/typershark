@@ -32,8 +32,7 @@ namespace TypeShark2.Client.Services
 
         public async Task<IList<GameDto>> GetGames()
         {
-            var gamesStream = await _httpClient.GetStreamAsync("api/games");
-            return await JsonSerializer.DeserializeAsync<List<GameDto>>(gamesStream, _jsonOptions);
+            return await _httpClient.GetFromJsonAsync<List<GameDto>>("api/games");
         }
     }
 }

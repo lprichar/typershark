@@ -10,8 +10,6 @@ namespace TypeShark2.Client
 {
     public class Program
     {
-        private const string BaseUri = "https://localhost:44306/";
-
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -19,7 +17,7 @@ namespace TypeShark2.Client
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddSingleton<IGameContext, GameContext>();
-            builder.Services.AddHttpClient<IGamesService, GamesService>(client => client.BaseAddress = new Uri(BaseUri));
+            builder.Services.AddHttpClient<IGamesService, GamesService>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
             await builder.Build().RunAsync();
         }
