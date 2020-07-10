@@ -28,9 +28,20 @@ namespace TypeShark2.Client.Pages
 
         private async void OnKeyPress(object sender, string key)
         {
-            await InvokeAsync(() =>
+            await InvokeAsync(async () =>
             {
-                CurrentGame.OnKeyPress(key);
+                if (CurrentGame.IsStarted)
+                {
+                    CurrentGame.OnKeyPress(key);
+                }
+                else
+                {
+                    if (key == "Enter")
+                    {
+                        await ToggleGameState();
+                    }
+                }
+
                 StateHasChanged();
             });
         }
