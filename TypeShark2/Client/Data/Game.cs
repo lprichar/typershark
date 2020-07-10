@@ -138,6 +138,7 @@ namespace TypeShark2.Client.Data
 
         public void Clear()
         {
+            Score = 0;
             foreach (var shark in Sharks)
             {
                 RemoveShark(shark);

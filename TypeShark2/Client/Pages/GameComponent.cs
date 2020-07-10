@@ -17,7 +17,7 @@ namespace TypeShark2.Client.Pages
         [Parameter]
         public string GameId { get; set; }
 
-        private int? GetGameId() => string.IsNullOrEmpty(GameId) ? (int?)null : Int32.Parse(GameId);
+        private int? GetGameId() => string.IsNullOrEmpty(GameId) ? (int?)null : int.Parse(GameId);
 
         public static Game CurrentGame;
         protected static string Message { get; set; }
@@ -32,7 +32,7 @@ namespace TypeShark2.Client.Pages
             await InvokeAsync(() =>
             {
                 CurrentGame.OnKeyPress(key);
-                this.StateHasChanged();
+                StateHasChanged();
             });
         }
 
@@ -52,7 +52,7 @@ namespace TypeShark2.Client.Pages
 
             if (multiPlayer)
             {
-                SignalrInit();
+                SignalRInit();
 
                 await _hubConnection.StartAsync();
                 var playerDto = new PlayerDto { Name = Context.Player.PlayerName };
@@ -66,7 +66,7 @@ namespace TypeShark2.Client.Pages
             StateHasChanged();
         }
 
-        private void SignalrInit()
+        private void SignalRInit()
         {
             var absoluteUri = NavigationManager.ToAbsoluteUri("/gamehub");
             _hubConnection = new HubConnectionBuilder()
@@ -92,7 +92,7 @@ namespace TypeShark2.Client.Pages
             InvokeAsync(() =>
             {
                 Message = "Game over, congratulations you scored " + CurrentGame.Score;
-                this.StateHasChanged();
+                StateHasChanged();
             });
         }
 
@@ -113,6 +113,8 @@ namespace TypeShark2.Client.Pages
         public void Dispose()
         {
             _ = _hubConnection?.DisposeAsync();
+            CurrentGame.SharkAdded -= SharkAdded;
+            CurrentGame.GameOver -= GameOver;
         }
     }
 }
