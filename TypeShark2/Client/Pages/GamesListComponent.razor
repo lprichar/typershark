@@ -1,35 +1,31 @@
-﻿<div class="container">
-    <div class="col-md-4 offset-md-4">
-        <h3>Existing Games</h3>
-        @if (PublicGames == null)
+﻿<h3>Existing Games</h3>
+@if (PublicGames == null)
+{
+    <span>Loading...</span>
+}
+else
+{
+    <ul>
+        @foreach (var game in PublicGames)
         {
-            <span>Loading...</span>
+            <li><a href="game/@game.Id">@game.Name (@game.Id)</a></li>
         }
-        else
-        {
-            <ul>
-                @foreach (var game in PublicGames)
-                {
-                    <li><a href="game/@game.Id">@game.Name (@game.Id)</a></li>
-                }
-            </ul>
-            @if (PublicGames.Count == 0)
-            {
-                <p>None found, time to take the shark by the horns.</p>
-            }
-        }
+    </ul>
+    @if (PublicGames.Count == 0)
+    {
+        <p>None found, time to take the shark by the horns.</p>
+    }
+}
 
-        <h3>New Multi-Player Game</h3>
-        <ol>
-            <li>Name It</li>
-            <li>Create It</li>
-            <li>Wait for People to Join It</li>
-            <li>Start It</li>
-        </ol>
+<h3>New Multi-Player Game</h3>
+<ol>
+    <li>Name It</li>
+    <li>Create It</li>
+    <li>Wait for People to Join It</li>
+    <li>Start It</li>
+</ol>
 
-        <EditForm Model="NewGame" OnValidSubmit="CreateGame" class="form-inline">
-            <InputText id="name" class="form-control col-md-9" type="text" placeholder="Game Name" @bind-Value="NewGame.Name"/>
-            <button class="btn btn-primary col-md-3" type="submit">Create</button>
-        </EditForm>
-    </div>
-</div>
+<EditForm Model="NewGame" OnValidSubmit="CreateGame" class="form-inline">
+    <InputText id="name" class="form-control col-md-9" type="text" placeholder="Game Name" @bind-Value="NewGame.Name"/>
+    <button class="btn btn-primary col-md-3" type="submit">Create</button>
+</EditForm>
