@@ -31,7 +31,7 @@ namespace TypeShark2.Client.Pages
         {
             NewGame.Players = new List<PlayerDto>
             {
-                new PlayerDto { Name = Context.Player.PlayerName }
+                new PlayerDto { Name = Context.Player.Name }
             };
             var newGame = await GamesService.CreateGame(NewGame);
             Context.CurrentGame = newGame;

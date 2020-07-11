@@ -4,7 +4,7 @@ namespace TypeShark2.Client.Data
 {
     public interface IGameContext
     {
-        public Player Player { get; set; }
+        public PlayerDto Player { get; set; }
         public GameDto CurrentGame { get; set; }
     }
 
@@ -13,7 +13,7 @@ namespace TypeShark2.Client.Data
     /// </summary>
     public class GameContext : IGameContext
     {
-        public Player Player { get; set; }
+        public PlayerDto Player { get; set; }
         public GameDto CurrentGame { get; set; }
     }
 }

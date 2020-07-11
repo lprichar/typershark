@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,7 +19,6 @@ namespace TypeShark2.Client.Pages
         [Parameter]
         public string GameId { get; set; }
 
-        private HubConnection _hubConnection;
         private IGameEngineAdapter _gameEngine;
         private int? GetGameId() => string.IsNullOrEmpty(GameId) ? (int?)null : int.Parse(GameId);
         private bool IsMultiPlayer => !string.IsNullOrEmpty(GameId);
@@ -39,6 +37,11 @@ namespace TypeShark2.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            if (IsMultiPlayer && Context.Player == null)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+
             InteropKeyPress.KeyPress += OnKeyPress;
             GameInit();
 
@@ -51,41 +54,20 @@ namespace TypeShark2.Client.Pages
                 Sharks = new List<SharkDto>()
             };
 
-            if (IsMultiPlayer)
-            {
-                await SignalRInit();
-                await JoinGame(gameId);
-            }
+            await _gameEngine.OnInitializeAsync(gameId, Context.Player);
         }
 
-        private async Task JoinGame(int? gameId)
-        {
-            var playerDto = new PlayerDto { Name = Context.Player.PlayerName };
-            await _hubConnection.SendAsync("JoinGame", gameId, playerDto);
-        }
-
-        private void OnPlayerAdded(List<PlayerDto> playersInGame)
+        private void OnPlayerAdded(object sender, List<PlayerDto> playersInGame)
         {
             Context.CurrentGame.Players = playersInGame;
             StateHasChanged();
-        }
-
-        private async Task SignalRInit()
-        {
-            var absoluteUri = NavigationManager.ToAbsoluteUri("/gamehub");
-            _hubConnection = new HubConnectionBuilder()
-                .WithUrl(absoluteUri)
-                .Build();
-            _hubConnection.On<List<PlayerDto>>("PlayerAdded", OnPlayerAdded);
-            await _hubConnection.StartAsync();
         }
 
         private void GameInit()
         {
             if (IsMultiPlayer)
             {
-                throw new NotImplementedException("Implement MultiPlayerGameEngine");
-                //_gameEngine = new MultiPlayerGameEngine();
+                _gameEngine = new MultiPlayerGameEngine(NavigationManager);
             }
             else
             {
@@ -95,6 +77,7 @@ namespace TypeShark2.Client.Pages
             _gameEngine.SharkAdded += SharkAdded;
             _gameEngine.GameOver += GameOver;
             _gameEngine.GameChanged += GameChanged;
+            _gameEngine.PlayerAdded += OnPlayerAdded;
         }
 
         private void GameChanged(object sender, GameDto game)
@@ -126,10 +109,12 @@ namespace TypeShark2.Client.Pages
 
         public void Dispose()
         {
-            _ = _hubConnection?.DisposeAsync();
             InteropKeyPress.KeyPress -= OnKeyPress;
             _gameEngine.SharkAdded -= SharkAdded;
             _gameEngine.GameOver -= GameOver;
+            _gameEngine.GameChanged -= GameChanged;
+            _gameEngine.PlayerAdded -= OnPlayerAdded;
+            _gameEngine.Dispose();
         }
     }
 }

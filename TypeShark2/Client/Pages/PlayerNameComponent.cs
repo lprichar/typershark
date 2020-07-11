@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 using TypeShark2.Client.Data;
+using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Client.Pages
 {
@@ -9,7 +10,7 @@ namespace TypeShark2.Client.Pages
         [Inject]
         private IGameContext Context { get; set; }
 
-        private Player TempPlayer { get; set; } = new Player();
+        private PlayerDto TempPlayer { get; } = new PlayerDto();
 
         [Parameter]
         public EventCallback OnSetName { get; set; }

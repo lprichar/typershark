@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TypeShark2.Shared.Dtos;
 using TypeShark2.Shared.Services;
@@ -12,6 +15,8 @@ namespace TypeShark2.Client.Services
         event EventHandler<SharkDto> SharkAdded;
         event EventHandler<GameDto> GameOver;
         event EventHandler<GameDto> GameChanged;
+        event EventHandler<List<PlayerDto>> PlayerAdded;
+        Task OnInitializeAsync(int? gameId, PlayerDto player);
     }
 
     public class SinglePlayerGameEngine : IGameEngineAdapter
@@ -19,6 +24,7 @@ namespace TypeShark2.Client.Services
         public event EventHandler<SharkDto> SharkAdded;
         public event EventHandler<GameDto> GameOver;
         public event EventHandler<GameDto> GameChanged;
+        public event EventHandler<List<PlayerDto>> PlayerAdded;
 
         private readonly GameEngine _gameEngine;
         private readonly GameState _gameState;
@@ -26,11 +32,15 @@ namespace TypeShark2.Client.Services
         public SinglePlayerGameEngine()
         {
             _gameEngine = new GameEngine();
+            _gameState = _gameEngine.CreateGame();
+        }
+
+        public Task OnInitializeAsync(int? gameId, PlayerDto player)
+        {
             _gameEngine.SharkAdded += OnSharkAdded;
             _gameEngine.GameOver += OnGameOver;
             _gameEngine.GameChanged += OnGameChanged;
-
-            _gameState = _gameEngine.CreateGame();
+            return Task.FromResult(true);
         }
 
         private void OnGameChanged(object sender, GameDto gameDto)
@@ -53,6 +63,7 @@ namespace TypeShark2.Client.Services
         {
             _gameEngine.SharkAdded -= OnSharkAdded;
             _gameEngine.GameOver -= OnGameOver;
+            _gameEngine.GameChanged -= OnGameChanged;
         }
 
         public async Task OnKeyPress(string key)
@@ -66,7 +77,62 @@ namespace TypeShark2.Client.Services
         }
     }
 
-    //public class MultiPlayerGameEngine : IGameEngineAdapter
-    //{
-    //}
+    public class MultiPlayerGameEngine : IGameEngineAdapter
+    {
+        public event EventHandler<List<PlayerDto>> PlayerAdded;
+
+        public async Task OnInitializeAsync(int? gameId, PlayerDto player)
+        {
+            await SignalRInit();
+            await JoinGame(gameId, player);
+        }
+
+        private async Task JoinGame(int? gameId, PlayerDto player)
+        {
+            await _hubConnection.SendAsync("JoinGame", gameId, player);
+        }
+
+        private readonly NavigationManager _navigationManager;
+
+        public MultiPlayerGameEngine(NavigationManager navigationManager)
+        {
+            _navigationManager = navigationManager;
+        }
+
+        private HubConnection _hubConnection;
+
+        private async Task SignalRInit()
+        {
+            var absoluteUri = _navigationManager.ToAbsoluteUri("/gamehub");
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(absoluteUri)
+                .Build();
+            _hubConnection.On<List<PlayerDto>>("PlayerAdded", OnPlayerAdded);
+            await _hubConnection.StartAsync();
+        }
+
+        private void OnPlayerAdded(List<PlayerDto> players)
+        {
+            PlayerAdded?.Invoke(this, players);
+        }
+
+        public Task OnKeyPress(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ToggleGameState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public event EventHandler<SharkDto> SharkAdded;
+        public event EventHandler<GameDto> GameOver;
+        public event EventHandler<GameDto> GameChanged;
+
+        public void Dispose()
+        {
+            _ = _hubConnection?.DisposeAsync();
+        }
+    }
 }

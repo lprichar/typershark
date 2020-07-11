@@ -9,10 +9,11 @@
                     @(CurrentGame.IsStarted ? "Stop" : "Start") Game
                 </button>
                 <input type="checkbox" id="isEasy" @bind="@CurrentGame.IsEasy"/><label for="isEasy">Easy Mode</label>
+                <a href="/">Back</a>
             </div>
             <div><span class="message">@CurrentGame.Message</span></div>
             <div class="flex-fill text-right">
-                <span class="score">@Context.Player?.PlayerName Score: @CurrentGame.Score</span>
+                <span class="score">@CurrentGame.Score</span>
             </div>
         </div>
     </div>
