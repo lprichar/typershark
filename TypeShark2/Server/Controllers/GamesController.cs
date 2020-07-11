@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using TypeShark2.Server.Services;
-using TypeShark2.Shared;
+using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Server.Controllers
 {

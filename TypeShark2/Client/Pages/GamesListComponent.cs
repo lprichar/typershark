@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TypeShark2.Client.Data;
 using TypeShark2.Client.Services;
-using TypeShark2.Shared;
+using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Client.Pages
 {

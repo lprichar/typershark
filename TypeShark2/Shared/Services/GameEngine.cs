@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TypeShark2.Client.Data;
+using TypeShark2.Shared.Dtos;
 
-namespace TypeShark2.Client.Services
+namespace TypeShark2.Shared.Services
 {
     public interface IGameEngine
     {
-        event EventHandler SharkAdded;
+        event EventHandler<SharkDto> SharkAdded;
         event EventHandler GameOver;
-        Task Start(Game game);
-        void Stop(Game game);
-        void Clear(Game game);
+        Task Start(GameState game);
+        void Stop(GameState game);
+        void Clear(GameState game);
     }
 
     public class GameEngine : IGameEngine
@@ -26,56 +26,92 @@ namespace TypeShark2.Client.Services
         private static readonly string[] Words7 = { "rainstorm", "toothsome", "ill-fated", "influence", "momentous", "befitting", "insurance", "wholesale", "afternoon", "draconian", "worthless", "voracious", "aftermath", "laughable", "acoustics", "political", "apologize", "imaginary", "delicious", "abandoned", "digestion", "obnoxious", "important", "apathetic", "scarecrow", "condemned", "vegetable", "depressed", "lunchroom", "agreement", "quicksand", "carpenter", "absorbing", "difficult", "squealing", "endurable", "plausible", "grotesque", "agonizing", "thinkable", "unhealthy", "overjoyed", "pollution", "ceaseless", "garrulous", "embarrass", "miscreant", "passenger", "alcoholic", "expensive", "expansion", "nostalgic", "delirious", "guarantee", "tasteless", "hilarious", "deafening", "secretive", "quizzical", "fantastic", "discovery", "woebegone", "existence", "sweltering", "chivalrous", "outrageous", "functional", "punishment", "irritating", "calculator", "thundering", "bewildered", "thoughtful", "wilderness", "earthquake", "toothbrush", "abstracted", "well-to-do", "successful", "accidental", "comparison", "disapprove", "fascinated", "victorious", "scientific", "understood", "changeable", "incredible", "beneficial", "fallacious", "experience", "motionless", "synonymous", "whispering", "attractive", "handsomely", "enchanting", "protective", "accessible", "unsuitable", "threatening", "efficacious", "substantial", "kindhearted", "painstaking", "stereotyped", "highfalutin", "astonishing", "superficial", "outstanding", "permissible", "domineering", "calculating", "dispensable", "magnificent", "overwrought", "symptomatic", "psychedelic", "cooperative", "industrious", "instinctive", "adventurous", "interesting", "frightening", "descriptive", "extra-small", "encouraging", "parsimonious", "questionable", "enthusiastic", "entertaining", "afterthought", "rambunctious", "distribution", "advertisement", "sophisticated", "knowledgeable", "materialistic", "scintillating" };
         private static readonly List<string[]> WordSets = new List<string[]> { Letters, Words3, Words4, Words5, Words6, Words7 };
 
-        public event EventHandler SharkAdded;
+        public event EventHandler<SharkDto> SharkAdded;
+        public event EventHandler<GameDto> GameChanged;
         public event EventHandler GameOver;
 
         private readonly Random _random = new Random();
 
-        public async Task Start(Game game)
+        public async Task Start(GameState game)
         {
-            game.IsStarted = true;
-            while (game.IsStarted)
+            game.GameDto.IsStarted = true;
+            GameChanged?.Invoke(this, game.GameDto);
+            while (game.GameDto.IsStarted)
             {
                 AddShark(game);
-                SharkAdded?.Invoke(this, EventArgs.Empty);
-                var baseDelay = GetBaseDelay(game.Sharks.Count, game.IsEasy);
+                var baseDelay = GetBaseDelay(game.Sharks.Count, game.GameDto.IsEasy);
                 await Task.Delay(baseDelay + _random.Next(0, 800));
             }
         }
 
-        public void Stop(Game game)
+        public void Stop(GameState game)
         {
             foreach (var shark in game.Sharks.ToList())
             {
                 RemoveShark(game, shark);
             }
-            game.IsStarted = false;
+            game.GameDto.IsStarted = false;
+            GameOver?.Invoke(this, EventArgs.Empty);
         }
 
-        public void Clear(Game game)
+        public void Clear(GameState game)
         {
-            game.Score = 0;
+            game.GameDto.Score = 0;
             foreach (var shark in game.Sharks)
             {
                 RemoveShark(game, shark);
             }
         }
 
-        private void AddShark(Game game)
+        public async Task OnKeyPress(GameState game, string key)
+        {
+            if (game.GameDto.IsStarted)
+            {
+                LiveGameKeyPress(game, key);
+            }
+            else
+            {
+                if (key == "Enter")
+                {
+                    await ToggleGameState(game);
+                }
+            }
+        }
+
+        private static void LiveGameKeyPress(GameState game, string key)
+        {
+            var durationSinceLastKeypress = DateTime.UtcNow - game.LastKeypress;
+            bool isDuplicateKeystroke =
+                durationSinceLastKeypress != null && durationSinceLastKeypress.Value.TotalMilliseconds < 10;
+            if (isDuplicateKeystroke)
+            {
+                return;
+            }
+
+            game.LastKeypress = DateTime.UtcNow;
+
+            game.Sharks
+                .Where(i => !i.SharkDto.IsSolved)
+                .ToList()
+                .ForEach(s => s.OnKeyPress(key));
+        }
+
+        private void AddShark(GameState game)
         {
             var height = _random.Next(0, 80);
-            var wordSet = GetWordSet(game.Sharks.Count, game.IsEasy);
+            var wordSet = GetWordSet(game.Sharks.Count, game.GameDto.IsEasy);
             var word = GetRandomWord(wordSet);
-            var baseSecondsToSolve = GetBaseSecondsToSolve(game.Sharks.Count, game.IsEasy);
+            var baseSecondsToSolve = GetBaseSecondsToSolve(game.Sharks.Count, game.GameDto.IsEasy);
             var secondsToSolve = baseSecondsToSolve + _random.Next(3, 5);
-            var shark = new Shark(game, word, height, secondsToSolve);
+            var shark = new SharkManager(game, word, height, secondsToSolve);
             shark.OnSolved += Shark_OnSolved;
             shark.OnFailed += Shark_OnFailed;
             game.Sharks.Add(shark);
             shark.StartTimer();
+            SharkAdded?.Invoke(this, shark.SharkDto);
         }
 
-        private void RemoveShark(Game game, Shark shark)
+        private void RemoveShark(GameState game, SharkManager shark)
         {
             shark.OnSolved -= Shark_OnSolved;
             shark.OnFailed -= Shark_OnFailed;
@@ -89,12 +125,13 @@ namespace TypeShark2.Client.Services
             return words[index];
         }
 
-        private void Shark_OnSolved(object sender, Game game)
+        private void Shark_OnSolved(object sender, GameState game)
         {
-            game.Score++;
+            game.GameDto.Score++;
+            GameChanged?.Invoke(sender, game.GameDto);
         }
 
-        private void Shark_OnFailed(object sender, Game game)
+        private void Shark_OnFailed(object sender, GameState game)
         {
             Stop(game);
             GameOver?.Invoke(this, EventArgs.Empty);
@@ -130,6 +167,29 @@ namespace TypeShark2.Client.Services
             wordSet = wordSet + (sharkCount / 10);
             wordSet = Math.Min(wordSet, WordSets.Count - 1);
             return WordSets[wordSet];
+        }
+
+        public GameState CreateGame()
+        {
+            return new GameState
+            {
+                GameDto = new GameDto(),
+                Sharks = new List<SharkManager>(),
+            };
+        }
+
+        public async Task ToggleGameState(GameState gameState)
+        {
+            if (gameState.GameDto.IsStarted)
+            {
+                Stop(gameState);
+            }
+            else
+            {
+                Clear(gameState);
+                gameState.GameDto.Message = "";
+                await Start(gameState);
+            }
         }
     }
 

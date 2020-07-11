@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TypeShark2.Shared;
+using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Server.Services
 {

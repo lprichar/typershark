@@ -1,4 +1,4 @@
-﻿using TypeShark2.Shared;
+﻿using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Client.Data
 {

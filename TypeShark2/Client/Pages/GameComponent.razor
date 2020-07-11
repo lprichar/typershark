@@ -10,7 +10,7 @@
                 </button>
                 <input type="checkbox" id="isEasy" @bind="@CurrentGame.IsEasy"/><label for="isEasy">Easy Mode</label>
             </div>
-            <div><span class="message">@Message</span></div>
+            <div><span class="message">@CurrentGame.Message</span></div>
             <div class="flex-fill text-right">
                 <span class="score">@Context.Player?.PlayerName Score: @CurrentGame.Score</span>
             </div>

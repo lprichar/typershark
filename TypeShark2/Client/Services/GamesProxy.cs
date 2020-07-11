@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
-using TypeShark2.Shared;
+using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Client.Services
 {

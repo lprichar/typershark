@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using TypeShark2.Server.Services;
-using TypeShark2.Shared;
+using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Server.Hubs
 {
