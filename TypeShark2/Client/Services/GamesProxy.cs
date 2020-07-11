@@ -13,12 +13,12 @@ namespace TypeShark2.Client.Services
         Task<GameDto> CreateGame(GameDto game);
     }
 
-    public class GamesService : IGamesService
+    public class GamesProxy : IGamesService
     {
         private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         private readonly HttpClient _httpClient;
 
-        public GamesService(HttpClient httpClient)
+        public GamesProxy(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }

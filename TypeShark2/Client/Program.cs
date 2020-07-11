@@ -17,7 +17,8 @@ namespace TypeShark2.Client
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddSingleton<IGameContext, GameContext>();
-            builder.Services.AddHttpClient<IGamesService, GamesService>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddHttpClient<IGamesService, GamesProxy>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddTransient<IGameEngine, GameEngine>();
 
             await builder.Build().RunAsync();
         }

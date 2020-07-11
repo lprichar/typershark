@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TypeShark2.Client.Data;
 using TypeShark2.Client.JsInterop;
+using TypeShark2.Client.Services;
 using TypeShark2.Shared;
 
 namespace TypeShark2.Client.Pages
@@ -13,6 +14,9 @@ namespace TypeShark2.Client.Pages
     {
         [Inject]
         private IGameContext Context { get; set; }
+
+        [Inject]
+        private IGameEngine GameEngine { get; set; }
 
         [Parameter]
         public string GameId { get; set; }
@@ -92,8 +96,8 @@ namespace TypeShark2.Client.Pages
         private void GameInit()
         {
             CurrentGame = new Game();
-            CurrentGame.SharkAdded += SharkAdded;
-            CurrentGame.GameOver += GameOver;
+            GameEngine.SharkAdded += SharkAdded;
+            GameEngine.GameOver += GameOver;
         }
 
         private void SharkAdded(object sender, EventArgs e)
@@ -114,13 +118,13 @@ namespace TypeShark2.Client.Pages
         {
             if (CurrentGame.IsStarted)
             {
-                CurrentGame.Stop();
+                GameEngine.Stop(CurrentGame);
             }
             else
             {
-                CurrentGame.Clear();
+                GameEngine.Clear(CurrentGame);
                 Message = "";
-                await CurrentGame.Start();
+                await GameEngine.Start(CurrentGame);
             }
         }
 
@@ -128,8 +132,8 @@ namespace TypeShark2.Client.Pages
         {
             _ = _hubConnection?.DisposeAsync();
             InteropKeyPress.KeyPress -= OnKeyPress;
-            CurrentGame.SharkAdded -= SharkAdded;
-            CurrentGame.GameOver -= GameOver;
+            GameEngine.SharkAdded -= SharkAdded;
+            GameEngine.GameOver -= GameOver;
         }
     }
 }

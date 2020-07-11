@@ -5,8 +5,11 @@ namespace TypeShark2.Client.Data
 {
     public class Shark : IDisposable
     {
-        public Shark(string word, int height, int secondsToSolve)
+        private readonly Game _game;
+
+        public Shark(Game game, string word, int height, int secondsToSolve)
         {
+            _game = game;
             Word = word;
             Height = height;
             SecondsToSolve = secondsToSolve;
@@ -19,8 +22,8 @@ namespace TypeShark2.Client.Data
             _timer.Start();
         }
 
-        public event EventHandler OnSolved;
-        public event EventHandler OnFailed;
+        public event EventHandler<Game> OnSolved;
+        public event EventHandler<Game> OnFailed;
 
         public string CharsDone => Word.Substring(0, _correctCharacters);
 
@@ -48,7 +51,7 @@ namespace TypeShark2.Client.Data
             }
             if (IsSolved)
             {
-                OnSolved?.Invoke(this, EventArgs.Empty);
+                OnSolved?.Invoke(this, _game);
             }
         }
 
@@ -56,7 +59,7 @@ namespace TypeShark2.Client.Data
         {
             if (!IsSolved)
             {
-                OnFailed?.Invoke(this, EventArgs.Empty);
+                OnFailed?.Invoke(this, _game);
             }
         }
 
