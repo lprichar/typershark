@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using TypeShark2.Client.Data;
 
 namespace TypeShark2.Client.Pages
@@ -8,7 +9,15 @@ namespace TypeShark2.Client.Pages
         [Inject]
         public IGameContext Context { get; private set; }
 
+        [Inject]
+        public ILogger<Index> Logger { get; set; }
+
         private bool? MultiPlayer = null;
+
+        protected override void OnInitialized()
+        {
+            Logger.LogInformation("Starting typershark");
+        }
 
         public void OnSetName(object obj)
         {

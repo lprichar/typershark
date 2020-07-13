@@ -8,11 +8,21 @@ namespace TypeShark2.Shared.Services
 {
     public interface IGameEngine
     {
-        event EventHandler<SharkDto> SharkAdded;
-        event EventHandler GameOver;
-        Task Start(GameState game);
-        void Stop(GameState game);
-        void Clear(GameState game);
+        Task ToggleGameState(GameState gameState);
+        GameState CreateGame();
+        Task<List<SharkDto>> OnKeyPress(GameState gameState, string key, string playerName);
+    }
+
+    /// <summary>
+    /// The game engine sends notifications like here when a shark is added.  For single player mode
+    /// the game engine event handler sends requests directly back to the GameComponent.  For multi-player
+    /// mode the engine event handler sends notifications back to the client through SignalR.
+    /// </summary>
+    public interface IGameEngineEventHandler
+    {
+        void GameChanged(GameDto gameDto);
+        void GameOver(GameDto gameDto);
+        void SharkAdded(SharkChangedEventArgs sharkAddedEventArgs);
     }
 
     public class GameEngine : IGameEngine
@@ -26,35 +36,40 @@ namespace TypeShark2.Shared.Services
         private static readonly string[] Words7 = { "rainstorm", "toothsome", "ill-fated", "influence", "momentous", "befitting", "insurance", "wholesale", "afternoon", "draconian", "worthless", "voracious", "aftermath", "laughable", "acoustics", "political", "apologize", "imaginary", "delicious", "abandoned", "digestion", "obnoxious", "important", "apathetic", "scarecrow", "condemned", "vegetable", "depressed", "lunchroom", "agreement", "quicksand", "carpenter", "absorbing", "difficult", "squealing", "endurable", "plausible", "grotesque", "agonizing", "thinkable", "unhealthy", "overjoyed", "pollution", "ceaseless", "garrulous", "embarrass", "miscreant", "passenger", "alcoholic", "expensive", "expansion", "nostalgic", "delirious", "guarantee", "tasteless", "hilarious", "deafening", "secretive", "quizzical", "fantastic", "discovery", "woebegone", "existence", "sweltering", "chivalrous", "outrageous", "functional", "punishment", "irritating", "calculator", "thundering", "bewildered", "thoughtful", "wilderness", "earthquake", "toothbrush", "abstracted", "well-to-do", "successful", "accidental", "comparison", "disapprove", "fascinated", "victorious", "scientific", "understood", "changeable", "incredible", "beneficial", "fallacious", "experience", "motionless", "synonymous", "whispering", "attractive", "handsomely", "enchanting", "protective", "accessible", "unsuitable", "threatening", "efficacious", "substantial", "kindhearted", "painstaking", "stereotyped", "highfalutin", "astonishing", "superficial", "outstanding", "permissible", "domineering", "calculating", "dispensable", "magnificent", "overwrought", "symptomatic", "psychedelic", "cooperative", "industrious", "instinctive", "adventurous", "interesting", "frightening", "descriptive", "extra-small", "encouraging", "parsimonious", "questionable", "enthusiastic", "entertaining", "afterthought", "rambunctious", "distribution", "advertisement", "sophisticated", "knowledgeable", "materialistic", "scintillating" };
         private static readonly List<string[]> WordSets = new List<string[]> { Letters, Words3, Words4, Words5, Words6, Words7 };
 
-        public event EventHandler<SharkDto> SharkAdded;
-        public event EventHandler<GameDto> GameChanged;
-        public event EventHandler GameOver;
-
         private readonly Random _random = new Random();
+        private readonly IGameEngineEventHandler _gameEngineEventHandler;
 
-        public async Task Start(GameState game)
+        public GameEngine(IGameEngineEventHandler gameEngineEventHandler)
         {
-            game.GameDto.IsStarted = true;
-            GameChanged?.Invoke(this, game.GameDto);
-            while (game.GameDto.IsStarted)
-            {
-                AddShark(game);
-                var baseDelay = GetBaseDelay(game.Sharks.Count, game.GameDto.IsEasy);
-                await Task.Delay(baseDelay + _random.Next(0, 800));
-            }
+            _gameEngineEventHandler = gameEngineEventHandler;
         }
 
-        public void Stop(GameState game)
+        private async Task Start(GameState game)
+        {
+            game.GameDto.IsStarted = true;
+            _gameEngineEventHandler.GameChanged(game.GameDto);
+            await Task.Factory.StartNew(async () =>
+            {
+                while (game.GameDto.IsStarted)
+                {
+                    AddShark(game);
+                    var baseDelay = GetBaseDelay(game.Sharks.Count, game.GameDto.IsEasy);
+                    await Task.Delay(baseDelay + _random.Next(0, 800));
+                }
+            }, TaskCreationOptions.LongRunning);
+        }
+
+        private void Stop(GameState game)
         {
             foreach (var shark in game.Sharks.ToList())
             {
                 RemoveShark(game, shark);
             }
             game.GameDto.IsStarted = false;
-            GameOver?.Invoke(this, EventArgs.Empty);
+            _gameEngineEventHandler.GameOver(game.GameDto);
         }
 
-        public void Clear(GameState game)
+        private void Clear(GameState game)
         {
             game.GameDto.Score = 0;
             foreach (var shark in game.Sharks)
@@ -63,37 +78,41 @@ namespace TypeShark2.Shared.Services
             }
         }
 
-        public async Task OnKeyPress(GameState game, string key)
+        public async Task<List<SharkDto>> OnKeyPress(GameState game, string key, string playerName)
         {
             if (game.GameDto.IsStarted)
             {
-                LiveGameKeyPress(game, key);
+                return LiveGameKeyPress(game, key, playerName);
             }
-            else
+
+            if (key == "Enter")
             {
-                if (key == "Enter")
-                {
-                    await ToggleGameState(game);
-                }
+                await ToggleGameState(game);
             }
+
+            return new List<SharkDto>();
         }
 
-        private static void LiveGameKeyPress(GameState game, string key)
+        private static List<SharkDto> LiveGameKeyPress(GameState game, string key, string playerName)
         {
             var durationSinceLastKeypress = DateTime.UtcNow - game.LastKeypress;
             bool isDuplicateKeystroke =
                 durationSinceLastKeypress != null && durationSinceLastKeypress.Value.TotalMilliseconds < 10;
             if (isDuplicateKeystroke)
             {
-                return;
+                return new List<SharkDto>();
             }
 
             game.LastKeypress = DateTime.UtcNow;
 
-            game.Sharks
+            var changedSharks = game.Sharks
                 .Where(i => !i.SharkDto.IsSolved)
                 .ToList()
-                .ForEach(s => s.OnKeyPress(key));
+                .Select(s => s.OnKeyPress(playerName, key))
+                .Where(s => s != null)
+                .ToList();
+
+            return changedSharks;
         }
 
         private void AddShark(GameState game)
@@ -108,7 +127,23 @@ namespace TypeShark2.Shared.Services
             shark.OnFailed += Shark_OnFailed;
             game.Sharks.Add(shark);
             shark.StartTimer();
-            SharkAdded?.Invoke(this, shark.SharkDto);
+            InvokeSharkAddedEvent(game, shark);
+        }
+
+        private void InvokeSharkAddedEvent(GameState game, SharkManager shark)
+        {
+            var sharkAddedEventArgs = GetSharkChangedEventArgs(game, shark);
+            _gameEngineEventHandler.SharkAdded(sharkAddedEventArgs);
+        }
+
+        private static SharkChangedEventArgs GetSharkChangedEventArgs(GameState game, SharkManager shark)
+        {
+            var sharkAddedEventArgs = new SharkChangedEventArgs
+            {
+                SharkDto = shark.SharkDto,
+                GameId = game?.GameDto?.Id ?? 0
+            };
+            return sharkAddedEventArgs;
         }
 
         private void RemoveShark(GameState game, SharkManager shark)
@@ -128,13 +163,22 @@ namespace TypeShark2.Shared.Services
         private void Shark_OnSolved(object sender, GameState game)
         {
             game.GameDto.Score++;
-            GameChanged?.Invoke(sender, game.GameDto);
+            _gameEngineEventHandler.GameChanged(game.GameDto);
         }
 
         private void Shark_OnFailed(object sender, GameState game)
         {
             Stop(game);
-            GameOver?.Invoke(this, EventArgs.Empty);
+            if (game.GameDto.Score > 0)
+            {
+                game.GameDto.Message = "Game over, congratulations you scored " + game.GameDto.Score;
+            }
+            else
+            {
+                game.GameDto.Message = "Won't you please play again?";
+            }
+
+            _gameEngineEventHandler.GameOver(game.GameDto);
         }
 
         private static int GetBaseDelay(int sharkCount, bool isEasy)

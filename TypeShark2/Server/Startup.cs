@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using TypeShark2.Server.Hubs;
 using TypeShark2.Server.Services;
+using TypeShark2.Shared.Services;
 
 namespace TypeShark2.Server
 {
@@ -27,6 +28,9 @@ namespace TypeShark2.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddSingleton<IGamesService, GamesService>();
+            // the game engine has timers and outlives it's requests, therefor it needs to be singleton to avoid being destroyed when GameHub is done with it
+            services.AddSingleton<IGameEngine, GameEngine>();
+            services.AddTransient<IGameEngineEventHandler, MultiPlayerGameEngineEventHandler>();
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
