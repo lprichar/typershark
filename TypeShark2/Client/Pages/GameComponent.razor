@@ -17,11 +17,11 @@
             </div>
         </div>
     </div>
-    <div class="flex-fill water" id="wrapper">        
+    <div class="d-flex flex-fill water" id="wrapper">        
         <div class="d-flex flex-column players flex-grow-1">
             @foreach (var player in Context.CurrentGame.Players)
             {
-                <div class="player d-flex flex-column justify-content-center h-100" >@player.Name</div>
+                <div class="player d-flex flex-column justify-content-center h-100 pl-3" >@player.Name</div>
             }
         </div>
 
