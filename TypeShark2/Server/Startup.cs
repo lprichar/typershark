@@ -55,7 +55,6 @@ namespace TypeShark2.Server
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
