@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using TypeShark2.Client.Data;
+using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Client.Pages
 {
@@ -12,6 +13,8 @@ namespace TypeShark2.Client.Pages
         [Inject]
         public ILogger<Index> Logger { get; set; }
 
+        private PlayerDto TempPlayer { get; } = new PlayerDto();
+
         private bool? MultiPlayer = null;
 
         protected override void OnInitialized()
@@ -19,10 +22,9 @@ namespace TypeShark2.Client.Pages
             Logger.LogInformation("Starting typershark");
         }
 
-        public void OnSetName(object obj)
+        public void SetName()
         {
-            // technically subscribing to the event on the child component is enough to call StateHasChanged, but for clarity:
-            StateHasChanged();
+            Context.Player = TempPlayer;
         }
 
         private void SelectMultiPlayer()
