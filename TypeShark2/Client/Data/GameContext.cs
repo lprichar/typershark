@@ -2,10 +2,16 @@
 
 namespace TypeShark2.Client.Data
 {
+    public enum GameIcon
+    {
+        Shark, Lion, Scream
+    }
+
     public interface IGameContext
     {
         public PlayerDto Player { get; set; }
         public GameDto CurrentGame { get; set; }
+        public GameIcon GameIcon { get; set; }
     }
 
     /// <summary>
@@ -15,5 +21,6 @@ namespace TypeShark2.Client.Data
     {
         public PlayerDto Player { get; set; }
         public GameDto CurrentGame { get; set; }
+        public GameIcon GameIcon { get; set; } = GameIcon.Shark;
     }
 }

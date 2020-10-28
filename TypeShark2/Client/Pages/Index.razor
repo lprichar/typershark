@@ -9,18 +9,29 @@
 
             <h3 class="pt-4">Multi Player</h3>
             <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Let's Hunt Sharks, Together</button>
-        }
-        else if (MultiPlayer == true)
+
+            <h3 class="pt-4">Game Icon</h3>
+            @foreach (var item in Enum.GetNames(typeof(Data.GameIcon)))
+            {
+                <div>
+                    <input type="radio" name="icon" id="@item" value="@item" 
+                           @onchange="RadioSelection" 
+                           checked=@(Context.GameIcon.ToString().Equals(item, StringComparison.OrdinalIgnoreCase)) />
+                    <label for="@item">@item</label>
+                </div>                
+            }
+}
+    else if (MultiPlayer == true)
+    {
+        if (Context.Player?.Name == null)
         {
-            if (Context.Player?.Name == null)
-            {
-                <PlayerNameComponent OnSetName="@OnSetName" />
-            }
-            else
-            {
-                <GamesListComponent />
-            }
+            <PlayerNameComponent OnSetName="@OnSetName" />
         }
+        else
+        {
+            <GamesListComponent />
+        }
+    }
     </div>
 </div>
 
