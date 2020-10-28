@@ -11,7 +11,7 @@ using TypeShark2.Shared.Dtos;
 
 namespace TypeShark2.Client.Pages
 {
-    public partial class GameComponent : IDisposable
+    public partial class Game : IDisposable
     {
         [Inject]
         private IGameContext Context { get; set; }
@@ -29,7 +29,7 @@ namespace TypeShark2.Client.Pages
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        public ILogger<GameComponent> Logger { get; set; }
+        public ILogger<Game> Logger { get; set; }
 
         private async void OnKeyPress(object sender, string key)
         {
