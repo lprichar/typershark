@@ -1,9 +1,6 @@
 # typershark
 A game for learning typing, used to demo Blazor and .NET 5.
 
-# technical details
-Built using .NET 5. RC1.
-
 # blazor resources
 
 ## Steven Sanderson (Blazor inventor)
@@ -24,6 +21,6 @@ https://www.dotnetconf.net/
   https://github.com/AdrienTorris/awesome-blazor
 
 # Known issues
-- Migrating to RC2 breaks CSS.
+- Migrating to RC2 (from RC1) breaks CSS.
 - Multiplayer throws Signal-R related exception.
 
