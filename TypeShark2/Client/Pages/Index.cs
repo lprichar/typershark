@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using System;
 using TypeShark2.Client.Data;
 
 namespace TypeShark2.Client.Pages
@@ -29,12 +28,6 @@ namespace TypeShark2.Client.Pages
         private void SelectMultiPlayer()
         {
             MultiPlayer = true;
-        }
-
-        // public string RadioValue { get; set; }
-        public void RadioSelection(ChangeEventArgs args)
-        {
-            Context.GameIcon = Enum.Parse<GameIcon>(args.Value.ToString());
         }
     }
 }
