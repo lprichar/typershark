@@ -2,25 +2,10 @@
 
 <div class="d-flex align-items-center vh-100">
     <div class="col-md-4 offset-md-4">
-        @if (MultiPlayer == null)
-        {
-            <h3>Single Player</h3>
-            <a href="/game" class="btn btn-primary">Let Me At 'Em</a>
-
-            <h3 class="pt-4">Multi Player</h3>
-            <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Let's Hunt Sharks, Together</button>
-
-            <h3 class="pt-4">Game Icon</h3>
-            @foreach (var item in Enum.GetNames(typeof(Data.GameIcon)))
-            {
-                <div>
-                    <input type="radio" name="icon" id="@item" value="@item" 
-                           @onchange="RadioSelection" 
-                           checked=@(Context.GameIcon.ToString().Equals(item, StringComparison.OrdinalIgnoreCase)) />
-                    <label for="@item">@item</label>
-                </div>                
-            }
-}
+    @if (MultiPlayer == null)
+    {
+        <GameMenuComponent OnSelectMultiPlayer="@SelectMultiPlayer" />
+    }
     else if (MultiPlayer == true)
     {
         if (Context.Player?.Name == null)
