@@ -19,6 +19,8 @@ https://www.dotnetconf.net/
   https://www.infoq.com/articles/webassembly-blazor/
 - Collection of awesome Blazor resources.
   https://github.com/AdrienTorris/awesome-blazor
+- Why I don't see DLLs and dotnet.wasm being loaded on a Blazor?
+  https://stackoverflow.com/questions/63701813/why-i-dont-see-dlls-and-dotnet-wasm-being-loaded-on-a-blazor-webassembly-app-in
 
 # Known issues
 - Migrating to RC2 (from RC1) breaks CSS.
