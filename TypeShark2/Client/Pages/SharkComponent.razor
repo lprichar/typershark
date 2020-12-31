@@ -2,21 +2,7 @@
 
 <div class='shark swimming' style='top: @(Shark.Height + "%"); animation-duration: @(Shark.SecondsToSolve + "s");'>
     <div class='@(Shark.IsSolved ? "solved" : "")'>
-        @switch (Context.GameIcon)
-        {
-            case Data.GameIcon.Lion:
-                <div class="icon">🦁</div>
-                break;
-
-            case Data.GameIcon.Scream:
-                <div class="icon">😱</div>
-                break;
-
-            default:
-            case Data.GameIcon.Shark:
-                <div class="icon">🦈</div>
-                break;
-        }
+        <div class="icon">🦈</div>
         <div class="word">
             <span class="letters-done">@Shark.CharsDone</span>
             <span class="letters-togo">@Shark.CharsToGo</span>

@@ -4,26 +4,10 @@
 <h3 class="pt-4">Multi Player</h3>
 <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Let's Hunt Sharks, Together</button>
 
-<h3 class="pt-4">Game Icon</h3>
-@foreach (var item in Enum.GetNames(typeof(Data.GameIcon)))
-{
-    <div>
-        <input type="radio" name="icon" id="@item" value="@item"
-               @onchange="RadioSelection"
-               checked=@(Context.GameIcon.ToString().Equals(item, StringComparison.OrdinalIgnoreCase)) />
-        <label for="@item">@item</label>
-    </div>
-}
-
 @code {
 
     [Inject]
     public Data.IGameContext Context { get; private set; }
-
-    public void RadioSelection(ChangeEventArgs args)
-    {
-        Context.GameIcon = Enum.Parse<Data.GameIcon>(args.Value.ToString());
-    }
 
     [Parameter]
     public EventCallback OnSelectMultiPlayer { get; set; }
