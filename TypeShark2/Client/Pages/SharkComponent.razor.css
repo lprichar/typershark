@@ -1,0 +1,60 @@
+﻿.shark {
+    position: absolute;
+    color: white;
+}
+
+    .shark.swimming {
+        left: -140px;
+        animation-name: swimmingshark;
+        animation-timing-function: linear;
+    }
+
+.solved {
+    transform: scale(0);
+    animation-name: solvedshark;
+    animation-timing-function: ease-in;
+    animation-duration: 400ms;
+}
+
+.shark .icon {
+    transform: scaleX(-1);
+    font-size: 80px;
+}
+
+.shark .word {
+    font-size: 12px;
+    font-weight: bold;
+    font-family: monospace;
+    text-align: center;
+    font-size: 30px;
+    position: relative;
+    top: -30px;
+}
+
+.letters-done {
+    color: rgb(232, 210, 30);
+}
+
+.letters-togo {
+    color: #DDD;
+}
+
+@keyframes swimmingshark {
+    from {
+        left: -140px;
+    }
+
+    to {
+        left: 100%;
+    }
+}
+
+@keyframes solvedshark {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(0);
+    }
+}

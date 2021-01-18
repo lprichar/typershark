@@ -1,0 +1,19 @@
+﻿<h3>Single Player</h3>
+<a href="/game" class="btn btn-primary">Let Me At 'Em</a>
+
+<h3 class="pt-4">Multi Player</h3>
+<button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Let's Hunt Sharks, Together</button>
+
+@code {
+
+    [Inject]
+    public Data.IGameContext Context { get; private set; }
+
+    [Parameter]
+    public EventCallback OnSelectMultiPlayer { get; set; }
+
+    private async Task SelectMultiPlayer()
+    {
+        await OnSelectMultiPlayer.InvokeAsync(null);
+    }
+}

@@ -1,0 +1,19 @@
+﻿@using TypeShark2.Shared.Dtos;
+
+<div class='shark swimming' style='top: @(Shark.Height + "%"); animation-duration: @(Shark.SecondsToSolve + "s");'>
+    <div class='@(Shark.IsSolved ? "solved" : "")'>
+        <div class="icon">🦈</div>
+        <div class="word">
+            <span class="letters-done">@Shark.CharsDone</span>
+            <span class="letters-togo">@Shark.CharsToGo</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public SharkDto Shark { get; set; }
+
+    [Inject]
+    public Data.IGameContext Context { get; set; }
+}

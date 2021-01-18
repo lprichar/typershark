@@ -27,15 +27,7 @@
 
         @foreach (var shark in CurrentGame.Sharks)
         {
-            <div class='shark swimming' style='top: @(shark.Height + "%"); animation-duration: @(shark.SecondsToSolve + "s");'>
-                <div class='@(shark.IsSolved ? "solved" : "")'>
-                    <div class="icon">🦈</div>
-                    <div class="word">
-                        <span class="letters-done">@shark.CharsDone</span>
-                        <span class="letters-togo">@shark.CharsToGo</span>
-                    </div>
-                </div>
-            </div>
+            <SharkComponent Shark="@shark" />
         }
     </div>
 </div>

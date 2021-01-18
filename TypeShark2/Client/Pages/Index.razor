@@ -2,25 +2,21 @@
 
 <div class="d-flex align-items-center vh-100">
     <div class="col-md-4 offset-md-4">
-        @if (MultiPlayer == null)
+    @if (MultiPlayer == null)
+    {
+        <GameMenuComponent OnSelectMultiPlayer="@SelectMultiPlayer" />
+    }
+    else if (MultiPlayer == true)
+    {
+        if (Context.Player?.Name == null)
         {
-            <h3>Single Player</h3>
-            <a href="/game" class="btn btn-primary">Let Me At 'Em</a>
-
-            <h3 class="pt-4">Multi Player</h3>
-            <button type="button" class="btn btn-primary" @onclick="SelectMultiPlayer">Let's Hunt Sharks, Together</button>
+            <PlayerNameComponent OnSetName="@OnSetName" />
         }
-        else if (MultiPlayer == true)
+        else
         {
-            if (Context.Player?.Name == null)
-            {
-                <PlayerNameComponent OnSetName="@OnSetName" />
-            }
-            else
-            {
-                <GamesListComponent />
-            }
+            <GamesListComponent />
         }
+    }
     </div>
 </div>
 
